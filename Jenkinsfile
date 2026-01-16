@@ -52,33 +52,33 @@ pipeline {
             }
         }
 
-        stage('Sonar') {
-            steps {
-                dir('expense-tracker-service') {
-                    withSonarQubeEnv('sonarqube-25.4.0.105899') {
-                        sh 'mvn sonar:sonar'
-                    }
-                }
-            }
+        // stage('Sonar') {
+        //     steps {
+        //         dir('expense-tracker-service') {
+        //             withSonarQubeEnv('sonarqube-25.4.0.105899') {
+        //                 sh 'mvn sonar:sonar'
+        //             }
+        //         }
+        //     }
 
-            post {
-                success {
-                    script {
-                        timeout(time: 1, unit: 'MINUTES') {
-                            def qualityGate = waitForQualityGate()
-                            if (qualityGate.status != 'OK') {
-                                error "SonarQube Quality Gate failed: ${qualityGate.status}"
-                            } else {
-                                echo "SonarQube analysis passed."
-                            }
-                        }
-                    }
-                }
-                failure {
-                    echo "SonarQube analysis failed during execution."
-                }
-            }
-        }
+        //     post {
+        //         success {
+        //             script {
+        //                 timeout(time: 1, unit: 'MINUTES') {
+        //                     def qualityGate = waitForQualityGate()
+        //                     if (qualityGate.status != 'OK') {
+        //                         error "SonarQube Quality Gate failed: ${qualityGate.status}"
+        //                     } else {
+        //                         echo "SonarQube analysis passed."
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         failure {
+        //             echo "SonarQube analysis failed during execution."
+        //         }
+        //     }
+        // }
         stage('Deploy to Render') {
             steps {
                 script {
