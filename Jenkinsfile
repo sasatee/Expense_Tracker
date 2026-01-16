@@ -5,19 +5,20 @@ pipeline {
     }
 
     tools {
-        maven 'mvn'     // Use the exact Maven name configured in Jenkins
-        nodejs "node"   // Use the NodeJS installation name in Jenkins
-        jdk 'jdk-17'    // Use the JDK name configured in Jenkins
+        jdk 'jdk-21'      // Use the installed JDK 21
+        maven 'mvn'       // Use the installed Maven tool name
+        nodejs 'node'     // Use the installed NodeJS tool name
     }
 
     environment {
+        JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
+        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+
         RENDER_API_KEY = credentials('render-api-key')
         RENDER_BACKEND_SERVICE_ID = 'srv-d5kvum2li9vc73fb8kl0'
         RENDER_BACKEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_BACKEND_SERVICE_ID}?key=HH45VpzmZPA"
         RENDER_FRONTEND_SERVICE_ID = 'srv-d5l0c0p4tr6s73cr8ik0'
         RENDER_FRONTEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_FRONTEND_SERVICE_ID}?key=TbPZe9yi_PI"
-        JAVA_HOME = tool name: 'jdk-17', type: 'jdk'
-        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
