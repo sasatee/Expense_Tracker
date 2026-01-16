@@ -11,16 +11,16 @@ pipeline {
 
     environment {
         RENDER_API_KEY = credentials('render-api-key')
-        RENDER_BACKEND_SERVICE_ID = 'srv-cv2udl2j1k6c739pp0lg'
+        RENDER_BACKEND_SERVICE_ID = 'srv-d5kvum2li9vc73fb8kl0'
         RENDER_BACKEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_BACKEND_SERVICE_ID}?key=HH45VpzmZPA"
-        RENDER_FRONTEND_SERVICE_ID = 'srv-d02k9ajuibrs73avrthg'
+        RENDER_FRONTEND_SERVICE_ID = 'srv-d5l0c0p4tr6s73cr8ik0'
         RENDER_FRONTEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_FRONTEND_SERVICE_ID}?key=TbPZe9yi_PI"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'Git token', url: 'https://github.com/emDevanshu/Expense_Tracker.git'
+                git branch: 'main', credentialsId: 'Git token', url: 'https://github.com/sasatee/Expense_Tracker.git'
             }
         }
         stage('Build') {
