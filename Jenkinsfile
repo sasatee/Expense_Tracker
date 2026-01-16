@@ -5,13 +5,13 @@ pipeline {
     }
 
     tools {
-        jdk 'jdk-21'      // Use the installed JDK 21
+        jdk 'jdk-17'      // Use the installed JDK 17
         maven 'mvn'       // Use the installed Maven tool name
         nodejs 'node'     // Use the installed NodeJS tool name
     }
 
     environment {
-        JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
+        JAVA_HOME = tool name: 'jdk-17', type: 'jdk'
         PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
         RENDER_API_KEY = credentials('render-api-key')
