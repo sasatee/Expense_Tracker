@@ -7,7 +7,7 @@ pipeline {
     tools {
         maven "mvn"
         nodejs "node"
-        jdk 'jdk-21'
+        jdk 'jdk-17'
     }
 
     environment {
@@ -28,13 +28,25 @@ pipeline {
             parallel {
                 stage('Java') {
                     steps {
-                        dir('expense-tracker-service') {
-                            sh 'mvn clean install'
-                            sh 'java -version'
-                            sh 'javac -version'
-                            sh 'mvn clean compile'
-                            
+                    dir('expense-tracker-service') 
+                    {
+                        // Ensure Maven uses the correct JDK
+                        script 
+                        {
+                            env.JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
+                            env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
                         }
+
+                        // Show Java versions (for debugging)
+                        sh 'java -version'
+                        sh 'javac -version'
+
+                        // Build and compile Java project
+                        sh 'mvn clean install'
+                        sh 'mvn clean compile'
+                            
+                        
+                    }
                     }
                 }
 
