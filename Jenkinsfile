@@ -5,9 +5,10 @@ pipeline {
     }
 
     tools {
-        maven 'Maven 3.9.3' 
-        nodejs "node"
-        jdk 'jdk17' 
+        maven 'mvn'     // Use the exact Maven name configured in Jenkins
+        nodejs "node"   // Use the NodeJS installation name in Jenkins
+        jdk 'jdk-17'    // Use the JDK name configured in Jenkins
+    }
 
     environment {
         RENDER_API_KEY = credentials('render-api-key')
@@ -15,7 +16,7 @@ pipeline {
         RENDER_BACKEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_BACKEND_SERVICE_ID}?key=HH45VpzmZPA"
         RENDER_FRONTEND_SERVICE_ID = 'srv-d5l0c0p4tr6s73cr8ik0'
         RENDER_FRONTEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_FRONTEND_SERVICE_ID}?key=TbPZe9yi_PI"
-        JAVA_HOME = tool name: 'jdk17', type: 'jdk'
+        JAVA_HOME = tool name: 'jdk-17', type: 'jdk'
         PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
     }
 
@@ -31,15 +32,8 @@ pipeline {
                 stage('Java') {
                     steps {
                         dir('expense-tracker-service') {
-                            
-                          
-
-                            // Verify versions
                             sh 'java -version'
                             sh 'javac -version'
-                            
-
-                            // Build backend
                             sh 'mvn clean install'
                         }
                     }
@@ -64,29 +58,21 @@ pipeline {
             }
         }
 
-        // Optional Sonar stage (commented out)
-        // stage('Sonar') { ... }
-
         stage('Deploy to Render') {
             steps {
                 script {
                     def changedFiles = sh(script: 'git diff --name-only HEAD HEAD~1', returnStdout: true).split('\n')
                     echo "Changed files:\n${changedFiles.join('\n')}"
 
-                    def backendChanged = changedFiles.any {
-                        it.startsWith("expense-tracker-service/") || it == "Dockerfile" || it == "Jenkinsfile"
-                    }
-
-                    def frontendChanged = changedFiles.any {
-                        it.startsWith("expense-tracker-ui/") || it == "Dockerfile" || it == "Jenkinsfile"
-                    }
+                    def backendChanged = changedFiles.any { it.startsWith("expense-tracker-service/") || it == "Dockerfile" || it == "Jenkinsfile" }
+                    def frontendChanged = changedFiles.any { it.startsWith("expense-tracker-ui/") || it == "Dockerfile" || it == "Jenkinsfile" }
 
                     if(backendChanged) {
                         echo "Changes detected in backend. Deploying backend..."
                         def backendResponse = httpRequest(
-                                url: "${RENDER_BACKEND_DEPLOY_HOOK}",
-                                httpMode: 'POST',
-                                validResponseCodes: '200:299'
+                            url: "${RENDER_BACKEND_DEPLOY_HOOK}",
+                            httpMode: 'POST',
+                            validResponseCodes: '200:299'
                         )
                         echo "Render Backend API Response: ${backendResponse}"
                     } else {
@@ -96,9 +82,9 @@ pipeline {
                     if(frontendChanged) {
                         echo "Changes detected in frontend. Deploying frontend..."
                         def frontendResponse = httpRequest(
-                                url: "${RENDER_FRONTEND_DEPLOY_HOOK}",
-                                httpMode: 'POST',
-                                validResponseCodes: '200:299'
+                            url: "${RENDER_FRONTEND_DEPLOY_HOOK}",
+                            httpMode: 'POST',
+                            validResponseCodes: '200:299'
                         )
                         echo "Render Frontend API Response: ${frontendResponse}"
                     } else {
@@ -107,6 +93,5 @@ pipeline {
                 }
             }
         }
-    }
     }
 }
