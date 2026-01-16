@@ -24,42 +24,27 @@ pipeline {
                 git branch: 'main', credentialsId: 'Git token', url: 'https://github.com/sasatee/Expense_Tracker.git'
             }
         }
-        stage('Build') {
-            parallel {
-                stage('Java') {
-                    steps {
-                    dir('expense-tracker-service') 
-                    {
-                        // Ensure Maven uses the correct JDK
-                        script 
-                        {
-                            env.JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
-                            env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
-                        }
-
-                        // Show Java versions (for debugging)
-                        sh 'java -version'
-                        sh 'javac -version'
-
-                        // Build and compile Java project
-                        sh 'mvn clean install'
-                        sh 'mvn clean compile'
-                            
-                        
+        stage('Build Java') {
+            steps {
+                dir('expense-tracker-service') {
+                    // Use the correct JDK for Maven
+                    script {
+                        // Tool name must match the one configured in Jenkins Global Tool Configuration
+                        env.JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
+                        env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+                        sh 'echo "JAVA_HOME is set to $JAVA_HOME"'
                     }
-                    }
-                }
 
-                stage('Angular') {
-                    steps {
-                        dir('expense-tracker-ui') {
-                            sh 'npm install'
-                            sh './node_modules/.bin/ng build --configuration production'
-                        }
-                    }
+                    // Verify Java and Javac versions
+                    sh 'java -version'
+                    sh 'javac -version'
+
+                    // Build the project
+                    sh 'mvn clean install'
                 }
             }
         }
+
 
         stage('Test') {
             steps {
