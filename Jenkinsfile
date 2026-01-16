@@ -5,10 +5,9 @@ pipeline {
     }
 
     tools {
-        maven "mvn"
+        maven 'Maven 3.9.3' 
         nodejs "node"
-        jdk 'jdk-21' // Make sure this is the full JDK 21 in Jenkins Global Tool Configuration
-    }
+        jdk 'jdk17' 
 
     environment {
         RENDER_API_KEY = credentials('render-api-key')
@@ -16,6 +15,8 @@ pipeline {
         RENDER_BACKEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_BACKEND_SERVICE_ID}?key=HH45VpzmZPA"
         RENDER_FRONTEND_SERVICE_ID = 'srv-d5l0c0p4tr6s73cr8ik0'
         RENDER_FRONTEND_DEPLOY_HOOK = "https://api.render.com/deploy/${RENDER_FRONTEND_SERVICE_ID}?key=TbPZe9yi_PI"
+        JAVA_HOME = tool name: 'jdk17', type: 'jdk'
+        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -30,16 +31,13 @@ pipeline {
                 stage('Java') {
                     steps {
                         dir('expense-tracker-service') {
-                            // Set correct JAVA_HOME for Maven
-                            script {
-                                env.JAVA_HOME = tool name: 'jdk-21', type: 'jdk'
-                                env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
-                                sh 'echo "JAVA_HOME is set to $JAVA_HOME"'
-                            }
+                            /
+                          
 
                             // Verify versions
                             sh 'java -version'
                             sh 'javac -version'
+                            
 
                             // Build backend
                             sh 'mvn clean install'
