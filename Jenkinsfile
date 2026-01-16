@@ -6,7 +6,8 @@ pipeline {
     }
     tools {
         maven "mvn"
-        nodejs "node"
+        nodejs "node",
+        jdk 'jdk-21'
     }
 
     environment {
@@ -29,6 +30,10 @@ pipeline {
                     steps {
                         dir('expense-tracker-service') {
                             sh 'mvn clean install'
+                            sh 'java -version'
+                            sh 'javac -version'
+                            sh 'mvn clean compile'
+                            
                         }
                     }
                 }
